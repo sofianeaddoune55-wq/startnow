@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- CSP: لا شبكة إلا إلى واجهة API (https) — لا صور ولا خطوط خارجية -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline'; img-src data: blob:; connect-src https:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#16A36A">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>StartNow</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2316A36A'/%3E%3Cpath d='M28 52l14 14 30-32' stroke='white' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg1:#f8f0ec; --bg2:#ebe6f6; --card:#ffffff; --text:#1c1c1e; --muted:#8a8a93;
+  --line:#ededf2; --dark:#1d1d21; --dark-text:#ffffff; --green:#16A36A; --chip:#ffffff;
+  --soft:#e7f6ee; --shadow:0 8px 24px rgba(30,20,50,.07); --danger:#e5484d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme=light]){
+    --bg1:#121216; --bg2:#17161f; --card:#1e1e24; --text:#f4f4f6; --muted:#9a9aa5;
+    --line:#2a2a33; --dark:#2b2b33; --chip:#23232b; --soft:#163a2b; --shadow:none;
+  }
+}
+:root[data-theme=dark]{
+  --bg1:#121216; --bg2:#17161f; --card:#1e1e24; --text:#f4f4f6; --muted:#9a9aa5;
+  --line:#2a2a33; --dark:#2b2b33; --chip:#23232b; --soft:#163a2b; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,"Noto Sans Arabic",Tahoma,sans-serif;
+  color:var(--text); min-height:100vh; min-height:100dvh;
+  background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 100%) fixed;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{ /* توهّج وردي خفيف كما في التصميم */
+  content:""; position:fixed; inset:-20% -30% auto auto; width:70vw; height:70vw; max-width:520px; max-height:520px;
+  background:radial-gradient(circle,rgba(230,160,190,.28),transparent 65%); pointer-events:none; z-index:0;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+.app{position:relative;z-index:1;max-width:440px;margin:0 auto;min-height:100dvh;
+  padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 112px)}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.grow{flex:1}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.card{background:var(--card);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
+.dark{background:var(--dark);color:var(--dark-text);box-shadow:none}
+.circle-btn{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--card);box-shadow:var(--shadow);font-size:20px}
+.circle-btn.dark{background:var(--dark);color:#fff;box-shadow:none}
+.avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#16A36A,#7fd8b2);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px}
+.hello{font-size:15px;color:var(--muted)}
+.name{font-size:17px;font-weight:700}
+h1.hero{font-size:34px;line-height:1.12;margin:22px 0 18px;font-weight:800;letter-spacing:-.6px}
+.section-h{display:flex;justify-content:space-between;align-items:center;margin:22px 0 12px}
+.section-h h2{font-size:20px;margin:0;font-weight:800}
+.link{color:var(--green);font-weight:600;font-size:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;background:var(--chip);box-shadow:var(--shadow);font-size:14px;font-weight:600;white-space:nowrap}
+.pill.on{background:var(--text);color:var(--bg1)}
+.pill.sm{padding:6px 10px;font-size:12px;box-shadow:none;border:1px solid var(--line)}
+.tag{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.tag.low{background:#e4f6ea;color:#1f7a4d}.tag.medium{background:#fff1dc;color:#a8650b}.tag.high{background:#fde5e6;color:#c0242b}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:999px;font-weight:700;background:var(--text);color:var(--bg1);width:100%;font-size:16px}
+.btn.green{background:var(--green);color:#fff}
+.btn.ghost{background:var(--chip);color:var(--text);box-shadow:var(--shadow)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn:disabled{opacity:.5}
+.btn.sm{width:auto;padding:9px 14px;font-size:14px}
+input[type=text],input[type=password],input[type=date],select,textarea{
+  width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--chip);outline:none;font-size:16px}
+input:focus,select:focus,textarea:focus{border-color:var(--green)}
+textarea{resize:vertical;min-height:90px}
+label.lbl{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px;font-weight:600}
+.field{margin-bottom:4px}
+/* شريط التقدم الدائري */
+.progress{display:flex;align-items:center;gap:18px}
+.ring{position:relative;width:120px;height:120px;flex:0 0 120px}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;font-size:26px;font-weight:800}
+.stat{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:14px}
+.stat b{font-size:17px;display:block}
+.stat .ic{width:34px;height:34px;border-radius:12px;background:rgba(255,255,255,.1);display:grid;place-items:center}
+/* بطاقة العبارة */
+.quote{border-radius:28px;padding:26px 22px 18px;min-height:250px;display:flex;flex-direction:column;gap:12px;box-shadow:0 14px 32px rgba(0,0,0,.14);overflow:hidden}
+.q-cat{font-size:12px;letter-spacing:.5px;opacity:.85;font-weight:700}
+.q-ar{font-size:23px;line-height:1.6;font-weight:800;margin:4px 0;white-space:pre-line}
+.q-en{font-size:14px;opacity:.9;margin:0;direction:ltr;text-align:left}
+.q-au{font-size:13px;opacity:.85;margin-top:auto}
+.q-actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.q-actions button{background:rgba(255,255,255,.22);color:inherit;border-radius:999px;padding:8px 12px;font-size:15px;backdrop-filter:blur(4px)}
+.q-actions button.on{background:rgba(255,255,255,.5)}
+/* المهام */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0 14px}
+.day{padding:10px 0;border-radius:18px;text-align:center;background:var(--chip);box-shadow:var(--shadow);font-size:12px;color:var(--muted)}
+.day b{display:block;font-size:16px;color:var(--text);margin-top:4px}
+.day.on{background:var(--text);color:var(--bg1)}.day.on b{color:var(--bg1)}
+.task{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:22px;background:var(--card);box-shadow:var(--shadow);margin-bottom:12px}
+.check{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex:0 0 26px;margin-top:2px;display:grid;place-items:center;color:#fff;font-size:14px}
+.task.done .check{background:var(--green);border-color:var(--green)}
+.task.done .t-text{text-decoration:line-through;color:var(--muted)}
+.t-body{flex:1;min-width:0}
+.t-text{font-weight:700;font-size:16px;overflow-wrap:anywhere;margin-bottom:6px}
+.t-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.t-act{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.timer{font-variant-numeric:tabular-nums;font-size:22px;font-weight:800;color:var(--green)}
+.empty{text-align:center;padding:28px 12px;color:var(--muted)}
+.banner{border-radius:22px;padding:16px;margin-bottom:12px;background:var(--soft)}
+/* الغرف */
+.room{padding:18px;border-radius:24px;background:var(--card);box-shadow:var(--shadow);margin-bottom:12px;display:block;width:100%;text-align:start}
+.room h3{margin:0 0 4px;font-size:18px}
+.rank{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.rank:last-child{border-bottom:0}
+.rank .n{width:28px;text-align:center;font-weight:800;color:var(--muted)}
+.rank.top1 .n{color:#d4a017}.rank.top2 .n{color:#8a8f98}.rank.top3 .n{color:#b06a2d}
+.rank .av{width:38px;height:38px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-weight:800;color:var(--green)}
+.rank.me{background:var(--soft);border-radius:16px;padding-left:10px;padding-right:10px}
+.streak{font-weight:800;font-size:15px}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:4px;font-size:22px;font-weight:800}
+/* القائمة السفلية */
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 14px);
+  width:min(408px,calc(100% - 24px));background:var(--dark);color:#fff;border-radius:999px;padding:8px;
+  display:flex;justify-content:space-between;z-index:20;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.nav button{flex:1;padding:10px 4px;border-radius:999px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:rgba(255,255,255,.7)}
+.nav button .i{font-size:19px;line-height:1}
+.nav button.on{background:#fff;color:#111;font-weight:700}
+/* الشيت (نافذة سفلية) */
+.overlay{position:fixed;inset:0;background:rgba(10,10,20,.4);z-index:40;display:flex;align-items:flex-end;justify-content:center;animation:fade .18s ease}
+.sheet{width:100%;max-width:440px;max-height:88dvh;overflow:auto;background:var(--card);border-radius:28px 28px 0 0;padding:20px 18px calc(env(safe-area-inset-bottom) + 20px);animation:up .22s ease}
+.sheet h3{margin:0 0 6px;font-size:20px}
+.opt{display:flex;align-items:center;gap:10px;padding:14px;border-radius:16px;background:var(--chip);border:1px solid var(--line);width:100%;margin-bottom:8px;text-align:start;font-weight:600}
+.opt.on{border-color:var(--green);background:var(--soft)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 100px);z-index:50;background:var(--text);color:var(--bg1);padding:12px 16px;border-radius:16px;display:flex;gap:12px;align-items:center;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.2);animation:up .2s ease}
+.toast button{color:var(--green);font-weight:800}
+.login{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;max-width:400px;margin:0 auto;padding:24px 22px}
+.brand{font-size:40px;font-weight:900;letter-spacing:-1px}
+.brand span{color:var(--green)}
+.slogan{color:var(--muted);margin:6px 0 26px;font-size:15px}
+.lang{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:14px;z-index:30}
+.hint{font-size:13px;color:var(--muted);margin-top:14px;text-align:center}
+.err{color:var(--danger);font-size:14px;min-height:20px;margin:10px 0 0}
+.spacer{height:12px}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes up{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+// ============================================================
+// 0) الإعداد — ضع رابط مشروع Supabase ومفتاحه العام
+// ============================================================
+const SUPABASE_URL = 'https://poaxwsowadmgvyoqzsfl.supabase.co';          // من Project Settings > API
+const SUPABASE_ANON_KEY = 'sb_secret_VggNnI_mHx95DF2pf5FkGw_wvuIuLsO';                  // المفتاح العام anon فقط، لا تضع service_role أبداً
+
+// ============================================================
+// 1) الترجمة — قاموس واحد T ودالة t()
+// ============================================================
+const T = {
+  login:{ar:'تسجيل الدخول',en:'Sign in'},
+  username:{ar:'اسم المستخدم',en:'Username'},
+  password:{ar:'كلمة المرور',en:'Password'},
+  loginHint:{ar:'الحسابات يُنشئها المسؤول. اطلب حسابك منه.',en:'Accounts are created by the admin. Ask them for yours.'},
+  hello:{ar:'مرحباً',en:'Hello'},
+  heroTitle:{ar:'لنجعل اليوم منتجاً',en:"Let's make today productive"},
+  progressToday:{ar:'تقدم اليوم',en:"Today's progress"},
+  total:{ar:'الكل',en:'Total'}, doneC:{ar:'منجزة',en:'Done'}, pendingC:{ar:'متبقية',en:'Pending'},
+  energy:{ar:'طاقتي قليلة',en:'Low energy'},
+  todayTasks:{ar:'مهام اليوم',en:"Today's tasks"},
+  all:{ar:'الكل',en:'All'}, todo:{ar:'لم تبدأ',en:'To do'}, doing:{ar:'قيد التنفيذ',en:'In progress'}, doneF:{ar:'منجزة',en:'Done'},
+  addTask:{ar:'مهمة جديدة',en:'New task'},
+  start5:{ar:'ابدأ 5 دقائق',en:'Start 5 min'},
+  finish:{ar:'تم ✓',en:'Done ✓'},
+  notStarted:{ar:'ما الذي يمنعك؟',en:'What is stopping you?'},
+  edit:{ar:'تعديل',en:'Edit'}, del:{ar:'حذف',en:'Delete'}, undo:{ar:'تراجع',en:'Undo'},
+  timerLeft:{ar:'الوقت المتبقي',en:'Time left'},
+  timerEnded:{ar:'انتهت الخمس دقائق. يمكنك المتابعة 10 دقائق أو التوقف بلا ذنب.',en:'Five minutes are up. Continue 10 more, or stop without guilt.'},
+  cont10:{ar:'تابع 10 دقائق',en:'Continue 10 min'}, stopHere:{ar:'أوقف هنا',en:'Stop here'},
+  dayCloseT:{ar:'إغلاق اليوم 🌙',en:'Close the day 🌙'},
+  dayCloseTxt:{ar:'بقيت مهام لم تُنجَز. ماذا نفعل بها؟',en:'Some tasks are still open. What should we do?'},
+  moveTomorrow:{ar:'انقلها لغد',en:'Move to tomorrow'}, closeNoMove:{ar:'أغلِق بلا نقل',en:'Close without moving'},
+  welcomeBack:{ar:'أهلاً بعودتك. العودة بعد الغياب انتصار بحد ذاتها.',en:'Welcome back. Returning after a break is a win.'},
+  rooms:{ar:'الغرف والتحدّيات',en:'Rooms & challenges'},
+  createRoom:{ar:'إنشاء غرفة',en:'Create room'}, joinRoom:{ar:'انضمام بكود',en:'Join with code'},
+  noRooms:{ar:'لا توجد غرف بعد. أنشئ غرفة وشارك الكود مع أصدقائك.',en:'No rooms yet. Create one and share the code with friends.'},
+  members:{ar:'عضو',en:'members'}, daysLeft:{ar:'يوم متبقٍ',en:'days left'},
+  streakL:{ar:'يوم متتالٍ',en:'day streak'}, checkin:{ar:'أنجزتُ اليوم ✓',en:'I did it today ✓'},
+  checkedOk:{ar:'سُجّل إنجازك اليوم. أحسنت!',en:'Logged for today. Well done!'},
+  restBtn:{ar:'يوم راحة (مرة أسبوعياً)',en:'Rest day (once a week)'},
+  leave:{ar:'مغادرة الغرفة',en:'Leave room'}, deleteRoom:{ar:'حذف الغرفة',en:'Delete room'},
+  leaderboard:{ar:'الصدارة',en:'Leaderboard'}, inviteCode:{ar:'كود الدعوة',en:'Invite code'},
+  supportMsg:{ar:'الاستمرارية أهم من السرعة. كل يوم تعود فيه يحسب.',en:'Consistency beats speed. Every day you return counts.'},
+  upcoming:{ar:'يبدأ قريباً',en:'Starts soon'}, ended:{ar:'انتهى التحدي',en:'Challenge ended'}, activeS:{ar:'نشط',en:'Active'},
+  insights:{ar:'رؤى',en:'Insights'}, topBarrier:{ar:'أكثر ما يمنعك',en:'What blocks you most'},
+  bestTime:{ar:'أفضل وقت لك',en:'Your best time'}, avgSession:{ar:'متوسط الجلسة',en:'Average session'},
+  activeDays:{ar:'أيام نشطة',en:'Active days'}, noData:{ar:'ستظهر رؤاك بعد أول إنجاز.',en:'Your insights appear after your first completed task.'},
+  profile:{ar:'حسابي',en:'Account'}, changePass:{ar:'تغيير كلمة المرور',en:'Change password'},
+  oldPass:{ar:'كلمة المرور الحالية',en:'Current password'}, newPass:{ar:'كلمة المرور الجديدة',en:'New password'},
+  logout:{ar:'تسجيل الخروج',en:'Sign out'}, notifs:{ar:'تذكيرات الإشعارات',en:'Notifications'},
+  theme:{ar:'المظهر',en:'Theme'}, auto:{ar:'تلقائي',en:'Auto'}, light:{ar:'فاتح',en:'Light'}, dark:{ar:'داكن',en:'Dark'},
+  admin:{ar:'المسؤول',en:'Admin'}, users:{ar:'الحسابات',en:'Accounts'}, newUser:{ar:'حساب جديد',en:'New account'},
+  quotesAdm:{ar:'العبارات والحكم',en:'Quotes & wisdom'}, addQuote:{ar:'عبارة جديدة',en:'New quote'},
+  displayName:{ar:'الاسم المعروض',en:'Display name'}, role:{ar:'الدور',en:'Role'},
+  userRole:{ar:'مستخدم',en:'User'}, adminRole:{ar:'مسؤول',en:'Admin'},
+  active:{ar:'مفعّل',en:'Active'}, disabled:{ar:'معطّل',en:'Disabled'},
+  enable:{ar:'تفعيل',en:'Enable'}, disable:{ar:'تعطيل',en:'Disable'}, resetPass:{ar:'كلمة مرور جديدة',en:'Reset password'},
+  save:{ar:'حفظ',en:'Save'}, create:{ar:'إنشاء',en:'Create'}, cancel:{ar:'إلغاء',en:'Cancel'},
+  text:{ar:'نص المهمة',en:'Task'}, priority:{ar:'الأولوية',en:'Priority'}, recurring:{ar:'التكرار',en:'Repeat'},
+  none:{ar:'بلا تكرار',en:'No repeat'}, daily:{ar:'يومي 🔁',en:'Daily 🔁'}, weekly:{ar:'أسبوعي 🔁',en:'Weekly 🔁'},
+  low:{ar:'منخفضة',en:'Low'}, medium:{ar:'متوسطة',en:'Medium'}, high:{ar:'عالية',en:'High'},
+  roomName:{ar:'اسم الغرفة',en:'Room name'}, goal:{ar:'الهدف المشترك',en:'Shared goal'},
+  duration:{ar:'مدة التحدي',en:'Challenge length'}, days:{ar:'يوماً',en:'days'},
+  code:{ar:'كود الغرفة (6 أحرف)',en:'Room code (6 chars)'},
+  quoteAr:{ar:'نص العبارة (عربي)',en:'Quote (Arabic)'}, quoteEn:{ar:'الترجمة (اختياري)',en:'Translation (optional)'},
+  author:{ar:'المصدر (اختياري)',en:'Source (optional)'}, category:{ar:'التصنيف',en:'Category'},
+  cat_start:{ar:'بداية',en:'Start'}, cat_low_energy:{ar:'طاقة منخفضة',en:'Low energy'},
+  cat_focus:{ar:'تركيز',en:'Focus'}, cat_comeback:{ar:'عودة بعد غياب',en:'Comeback'}, cat_achievement:{ar:'إنجاز',en:'Achievement'},
+  isActive:{ar:'مفعّلة (تظهر للمستخدمين)',en:'Active (shown to users)'},
+  share:{ar:'تنزيل كصورة',en:'Download image'},
+  needText:{ar:'اكتب نص المهمة أولاً',en:'Write the task first'},
+  errNet:{ar:'تعذّر الاتصال بالخادم. تحقق من الإنترنت.',en:'Could not reach the server. Check your connection.'},
+  errBad:{ar:'ردّ الخادم بشكل غير متوقع. تأكد من إعداد SUPABASE_URL.',en:'Unexpected server response. Check SUPABASE_URL.'},
+  errGeneric:{ar:'حدث خطأ، حاول مرة أخرى',en:'Something went wrong, try again'},
+  errNotLogged:{ar:'انتهت الجلسة، سجّل الدخول من جديد',en:'Session expired, please sign in again'},
+  badLogin:{ar:'اسم المستخدم أو كلمة المرور غير صحيحة',en:'Wrong username or password'},
+  wrongOld:{ar:'كلمة المرور الحالية غير صحيحة',en:'Current password is wrong'},
+  badCode:{ar:'كود الغرفة غير صحيح',en:'Invalid room code'},
+  notActive:{ar:'التحدي غير نشط اليوم',en:'Challenge is not active today'},
+  disabledAcc:{ar:'هذا الحساب معطّل. تواصل مع المسؤول',en:'This account is disabled. Contact the admin'},
+  copied:{ar:'تم نسخ الكود',en:'Code copied'},
+  confirmDel:{ar:'حذف هذه العبارة نهائياً؟',en:'Delete this quote permanently?'},
+  confirmRoom:{ar:'حذف الغرفة لجميع الأعضاء؟',en:'Delete the room for all members?'},
+  confirmLeave:{ar:'مغادرة الغرفة؟',en:'Leave the room?'},
+  pwOk:{ar:'تم تغيير كلمة المرور',en:'Password changed'},
+  userOk:{ar:'تم إنشاء الحساب',en:'Account created'},
+  roomFull:{ar:'الغرفة مكتملة',en:'Room is full'},
+  barrierHint:{ar:'اختر ما يمنعك الآن، وسنجد معاً أصغر خطوة.',en:'Pick what blocks you now, and we will find the smallest step together.'},
+  b_fear:{ar:'الخوف',en:'Fear'}, b_tired:{ar:'الإرهاق',en:'Tiredness'}, b_fog:{ar:'الضبابية',en:'Not sure where to start'},
+  b_perfect:{ar:'الكمالية',en:'Perfectionism'}, b_noise:{ar:'الضجيج والتشتت',en:'Noise & distraction'}, b_other:{ar:'سبب آخر',en:'Something else'},
+  r_fear:{ar:'الخوف طبيعي. لا تحتاج لإنهاء المهمة، فقط أن تبدأ. ما أصغر خطوة تستطيع فعلها الآن؟',en:'Fear is natural. You do not need to finish, only to start. What is the smallest step you can take now?'},
+  r_tired:{ar:'التعب يعني أنك تحتاج طاقة أخف. جرّب خمس دقائق فقط، وإن شئت توقف بلا ذنب.',en:'Tiredness means you need lighter energy. Try just five minutes, and stop without guilt if you wish.'},
+  r_fog:{ar:'الضبابية تزول بالحركة لا بالتفكير. اكتب أول كلمة من المهمة، وهذا يكفي للبداية.',en:'Fog lifts with movement, not thinking. Write the first word of the task; that is enough to begin.'},
+  r_perfect:{ar:'ابدأ بـ 20% وحسّن لاحقاً. المسودة الجيدة أفضل من كمال لم يبدأ أبداً.',en:'Start at 20% and improve later. A good draft beats a perfection that never starts.'},
+  r_noise:{ar:'أبعد ما يشتتك لخمس دقائق: الهاتف على الصامت ثم ابدأ.',en:'Move distractions away for five minutes: phone on silent, then start.'},
+  r_other:{ar:'لا بأس، لكل تأخير سبب. جرّب بدء أصغر جزء ممكن الآن.',en:'That is okay; every delay has a reason. Try starting the smallest possible part now.'},
+  inRoom:{ar:'أعضاء',en:'members'},
+  yourRank:{ar:'ترتيبك',en:'Your rank'}
+};
+const t = (k) => (T[k] && T[k][S.lang]) || k;
+
+// ============================================================
+// 2) قوالب الخلفيات الـ 12 — تُولَّد بالكود (بلا صور خارجية)
+// ============================================================
+const TEMPLATES = [
+  {c:['#ffb88c','#de6262','#7b4ba0'], fg:'#ffffff'},
+  {c:['#a8edea','#5fc9a7','#16A36A'], fg:'#052e20'},
+  {c:['#e0c3fc','#9b8cf5','#5a4bd1'], fg:'#ffffff'},
+  {c:['#ffe0c7','#ffb49a','#f08a7b'], fg:'#3a1510'},
+  {c:['#89f7fe','#66a6ff','#2a5bd7'], fg:'#06203f'},
+  {c:['#2b2e4a','#1c1f33','#0f1117'], fg:'#f5f5f7'},
+  {c:['#f6efe4','#e9dcc6','#d9c3a0'], fg:'#2d2418'},
+  {c:['#ffd6e7','#f7a8c9','#e56f9d'], fg:'#3b0f22'},
+  {c:['#134e3a','#16A36A','#0b3b2c'], fg:'#eafff5'},
+  {c:['#fbfbf8','#f1efe8','#e3dfd2'], fg:'#1a1a1a'},
+  {c:['#c3f5e0','#7fd8ff','#b38cff'], fg:'#101828'},
+  {c:['#3a3d45','#22252c','#111318'], fg:'#ffffff'}
+];
+const tplBg = (tp) => {
+  const [a,b,c] = tp.c;
+  return `radial-gradient(circle at 18% 14%, rgba(255,255,255,.28) 0 16%, transparent 17%),` +
+         `radial-gradient(circle at 88% 92%, rgba(0,0,0,.14) 0 30%, transparent 31%),` +
+         `linear-gradient(145deg, ${a}, ${b} 55%, ${c})`;
+};
+
+// ============================================================
+// 3) الحالة S + الأمان (التحقق المركزي)
+// ============================================================
+const S = {
+  token:null, user:null, lang:'ar', theme:'auto', tplIdx:0, notif:false,
+  tab:'home', tasks:[], logs:[], favs:[], dayClose:null, lastActive:null,
+  quotes:[], energyLow:false, comeback:false, filter:'all', dayView:null,
+  timer:null, tickId:null, undo:null, toast:null, sheet:null, audio:null,
+  roomId:null, roomData:null, rooms:[], admin:{users:[], quotes:[]}, busy:false
+};
+
+const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const $ = (s) => document.querySelector(s);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const pad = (n) => String(n).padStart(2,'0');
+const dayKey = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const addDays = (k, n) => { const d = new Date(k+'T00:00:00'); d.setDate(d.getDate()+n); return dayKey(d); };
+const daysBetween = (a, b) => Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00')) / 864e5);
+const fmtMs = (ms) => { const s = Math.ceil(ms/1000); return `${pad(Math.floor(s/60))}:${pad(s%60)}`; };
+const DAY_MS = 86400000;
+
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+
+const PRIOS = ['low','medium','high'], RECS = [null,'daily','weekly'], STATUSES = ['todo','doing','done'];
+const isKey = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
+
+// تنظيف مهمة واحدة: قوائم بيضاء وحدود أطوال
+function sanitizeTask(x){
+  if (!x || typeof x !== 'object') return null;
+  const text = typeof x.text === 'string' ? x.text.trim().slice(0,200).replace(/[<>]/g,'') : '';
+  if (!text) return null;
+  const num = (v) => (typeof v === 'number' && isFinite(v) ? v : null);
+  return {
+    id: typeof x.id === 'string' && x.id.length <= 40 ? x.id : uid(),
+    text,
+    status: STATUSES.includes(x.status) ? x.status : 'todo',
+    day: isKey(x.day) ? x.day : dayKey(new Date()),
+    priority: PRIOS.includes(x.priority) ? x.priority : 'medium',
+    recurring: RECS.includes(x.recurring) ? x.recurring : null,
+    parent: typeof x.parent === 'string' ? x.parent.slice(0,40) : null,
+    lastGen: isKey(x.lastGen) ? x.lastGen : null,
+    created: num(x.created) || Date.now(),
+    doneAt: num(x.doneAt),
+    sessionMs: Math.max(0, Math.min(num(x.sessionMs) || 0, DAY_MS))
+  };
+}
+// تنظيف الحالة المحفوظة محلياً (لا يدخل شيء إلى S إلا عبر هنا)
+function sanitizeState(raw){
+  const empty = {tasks:[], logs:[], favs:[], dayClose:null, lastActive:null};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return empty;
+  for (const k of ['__proto__','constructor','prototype']) if (k in raw) return empty;
+  const tasks = (Array.isArray(raw.tasks) ? raw.tasks : []).slice(0,500).map(sanitizeTask).filter(Boolean);
+  const logs = (Array.isArray(raw.logs) ? raw.logs : []).slice(-2000).filter(l =>
+      l && typeof l === 'object' && ['done','barrier','session'].includes(l.type) && isKey(l.date)
+    ).map(l => ({
+      type: l.type, date: l.date,
+      hour: Number.isInteger(l.hour) ? Math.min(23, Math.max(0, l.hour)) : null,
+      barrier: typeof l.barrier === 'string' ? l.barrier.slice(0,20) : null,
+      durMs: Math.max(0, Math.min(Number(l.durMs) || 0, DAY_MS))
+    }));
+  const favs = (Array.isArray(raw.favs) ? raw.favs : []).filter(v => typeof v === 'number' || typeof v === 'string').slice(0,200).map(String);
+  return {
+    tasks, logs, favs,
+    dayClose: isKey(raw.dayClose) ? raw.dayClose : null,
+    lastActive: isKey(raw.lastActive) ? raw.lastActive : null
+  };
+}
+
+// ============================================================
+// 4) الحفظ المحلي لكل مستخدم + التفضيلات العامة
+// ============================================================
+const userKey = () => 'startnow.v2.u.' + S.user.id;
+function saveUser(){
+  if (!S.user) return;
+  store.set(userKey(), {tasks:S.tasks, logs:S.logs, favs:S.favs, dayClose:S.dayClose, lastActive:S.lastActive});
+}
+function loadUser(){
+  const d = sanitizeState(store.get(userKey()));
+  Object.assign(S, d);
+}
+function savePrefs(){ store.set('startnow.v2.prefs', {lang:S.lang, theme:S.theme, tplIdx:S.tplIdx, notif:S.notif}); }
+function loadPrefs(){
+  const p = store.get('startnow.v2.prefs') || {};
+  S.lang = p.lang === 'en' ? 'en' : 'ar';
+  S.theme = ['light','dark','auto'].includes(p.theme) ? p.theme : 'auto';
+  S.tplIdx = Number.isInteger(p.tplIdx) && p.tplIdx >= 0 && p.tplIdx < TEMPLATES.length ? p.tplIdx : 0;
+  S.notif = p.notif === true;
+}
+
+// ============================================================
+// 5) الاتصال بالخادم
+// ============================================================
+// ============================================================
+// 5) الاتصال بـ Supabase: الدخول + قاعدة البيانات + دالة الإدارة
+// ============================================================
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {auth:{persistSession:true, autoRefreshToken:true}});
+const emailOf = (u) => `${u}@startnow.app`;
+const ERR_MAP = {'invalid code':'badCode', 'room is full':'roomFull', 'challenge ended':'ended', 'not active':'notActive'};
+function sbErr(e){
+  const m = String((e && e.message) || '');
+  for (const k in ERR_MAP) if (m.includes(k)) return t(ERR_MAP[k]);
+  return m || t('errGeneric');
+}
+async function must(promise){
+  const {data, error} = await promise;
+  if (error) throw new Error(sbErr(error));
+  return data;
+}
+async function fn(body){
+  const {data, error} = await sb.functions.invoke('admin', {body});
+  if (error){
+    let msg = t('errGeneric');
+    try { const j = await error.context.json(); if (j && j.error) msg = j.error; } catch(e){}
+    throw new Error(msg);
+  }
+  if (data && data.error) throw new Error(data.error);
+  return data;
+}
+async function loadProfile(){
+  const {data:{user}} = await sb.auth.getUser();
+  if (!user) throw new Error(t('errNotLogged'));
+  const p = await must(sb.from('profiles').select('id,username,display_name,role,disabled').eq('id', user.id).single());
+  if (p.disabled){ await sb.auth.signOut(); throw new Error(t('disabledAcc')); }
+  return {id:p.id, username:p.username, display_name:p.display_name, role:p.role};
+}
+// نفس منطق الاستمرارية: الراحة لا تكسر السلسلة، واليوم غير المنجز بعد لا يكسرها
+function streakOf(days, rests, start, today){
+  const set = new Set([...days, ...rests]);
+  const d = new Date(today + 'T00:00:00');
+  if (!set.has(dayKey(d))) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (set.has(dayKey(d)) && dayKey(d) >= start){ n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function buildRoom(raw){
+  const r = raw.room;
+  const today = raw.today > r.ends_on ? r.ends_on : raw.today;
+  const board = raw.board.map(m => ({
+    id: m.id, name: m.name,
+    streak: streakOf(m.days, m.rests, r.starts_on, today),
+    done: m.days.length,
+    today_done: m.days.includes(raw.today),
+    is_me: m.id === S.user.id
+  })).sort((a,b) => (b.streak - a.streak) || (b.done - a.done) || a.name.localeCompare(b.name));
+  return {room: r, board, me: raw.me};
+}
+
+async function api(action, d = {}, q = {}){
+  switch (action){
+    case 'login': {
+      const username = String(d.username || '').trim().toLowerCase();
+      const {error} = await sb.auth.signInWithPassword({email: emailOf(username), password: String(d.password || '')});
+      if (error) throw new Error(t('badLogin'));
+      return {token: 'session', user: await loadProfile()};
+    }
+    case 'me': {
+      const {data:{session}} = await sb.auth.getSession();
+      if (!session) throw new Error(t('errNotLogged'));
+      return {user: await loadProfile()};
+    }
+    case 'logout': await sb.auth.signOut(); return {};
+    case 'change_password': {
+      const {data:{user}} = await sb.auth.getUser();
+      const check = await sb.auth.signInWithPassword({email: user.email, password: String(d.old || '')});
+      if (check.error) throw new Error(t('wrongOld'));
+      await must(sb.auth.updateUser({password: String(d.new || '')}));
+      return {};
+    }
+
+    case 'quotes': return {quotes: await must(sb.from('quotes').select('id,ar,en,cat,author').eq('active', true).order('id'))};
+    case 'admin_quotes': return {quotes: await must(sb.from('quotes').select('id,ar,en,cat,author,active').order('id', {ascending:false}))};
+    case 'admin_quote_save': {
+      const row = {ar: d.ar, en: d.en || '', cat: d.cat, author: d.author || '', active: !!d.active};
+      if (d.id) await must(sb.from('quotes').update(row).eq('id', d.id));
+      else await must(sb.from('quotes').insert(row));
+      return {};
+    }
+    case 'admin_quote_delete': await must(sb.from('quotes').delete().eq('id', d.id)); return {};
+
+    case 'admin_users': return fn({action:'list_users'});
+    case 'admin_user_create': return fn({action:'create_user', ...d});
+    case 'admin_user_update': return fn({action:'update_user', ...d});
+
+    case 'rooms': return {rooms: await must(sb.rpc('my_rooms'))};
+    case 'room_create': return must(sb.rpc('create_room', {p_name: d.name, p_goal: d.goal, p_days: d.days}));
+    case 'room_join': return must(sb.rpc('join_room', {p_code: d.code}));
+    case 'room_leave': await must(sb.rpc('leave_room', {p_room: d.room_id})); return {};
+    case 'room_delete': await must(sb.rpc('delete_room', {p_room: d.room_id})); return {};
+    case 'room': return buildRoom(await must(sb.rpc('room_board', {p_room: Number(q.id)})));
+    case 'room_checkin': await must(sb.rpc('room_checkin', {p_room: d.room_id})); return {};
+    case 'room_rest': await must(sb.rpc('room_rest', {p_room: d.room_id})); return {};
+
+    default: throw new Error(t('errGeneric'));
+  }
+}
+
+function forceLogout(){
+  S.token = null; S.user = null; S.tab = 'home';
+  store.del('startnow.v2.token');
+  render();
+}
+
+// ============================================================
+// 6) منطق المهام والتكرار والإغلاق والرؤى والعبارات
+// ============================================================
+const findTask = (id) => S.tasks.find(x => x.id === id);
+
+function newTask(o){
+  return sanitizeTask({id:uid(), text:o.text, status:'todo', day:o.day, priority:o.priority || 'medium', recurring:o.recurring || null, created:Date.now()});
+}
+
+// توليد نسخة اليوم للمهام المتكررة
+function ensureRecurring(){
+  const today = dayKey(new Date());
+  for (const x of S.tasks){
+    if (!x.recurring || x.lastGen === today) continue;
+    const isDue = x.recurring === 'daily' || (x.recurring === 'weekly' && new Date(x.created).getDay() === new Date().getDay());
+    x.lastGen = today;
+    if (isDue && !S.tasks.some(y => y.parent === x.id && y.day === today)){
+      const copy = newTask({text:x.text, day:today, priority:x.priority});
+      copy.parent = x.id;
+      S.tasks.push(copy);
+    }
+  }
+}
+
+function completeTask(x){
+  x.status = 'done'; x.doneAt = Date.now();
+  const d = new Date();
+  S.logs.push({type:'done', date:dayKey(d), hour:d.getHours(), barrier:null, durMs:x.sessionMs || 0});
+}
+
+function insights(){
+  const barriers = {}, hours = {}, durs = [], days = new Set();
+  for (const l of S.logs){
+    days.add(l.date);
+    if (l.type === 'barrier' && l.barrier) barriers[l.barrier] = (barriers[l.barrier] || 0) + 1;
+    if ((l.type === 'done' || l.type === 'session') && l.hour !== null) hours[l.hour] = (hours[l.hour] || 0) + 1;
+    if (l.type === 'session' && l.durMs > 0) durs.push(l.durMs);
+  }
+  const top = (o) => Object.entries(o).sort((a,b) => b[1] - a[1])[0];
+  const tb = top(barriers), th = top(hours);
+  return {
+    barrier: tb ? tb[0] : null,
+    hour: th ? Number(th[0]) : null,
+    avgMin: durs.length ? Math.round(durs.reduce((a,b) => a+b, 0) / durs.length / 60000) : null,
+    activeDays: days.size
+  };
+}
+
+function currentQuoteCat(){
+  if (S.comeback) return 'comeback';
+  if (S.energyLow) return 'low_energy';
+  const today = dayKey(new Date());
+  if (S.tasks.some(x => x.day === today && x.status === 'done')) return 'achievement';
+  return 'start';
+}
+function currentQuote(){
+  if (!S.quotes.length) return null;
+  const cat = currentQuoteCat();
+  let pool = S.quotes.filter(q => q.cat === cat);
+  if (!pool.length) pool = S.quotes;
+  const d = new Date();
+  const seed = d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+  return pool[seed % pool.length];
+}
+
+// ============================================================
+// 7) المؤقّت (5 دقائق بطوابع زمنية) + الصوت والإشعار
+// ============================================================
+function startTimer(id){
+  const x = findTask(id); if (!x) return;
+  if (S.timer) endTimer(false);
+  x.status = 'doing';
+  S.timer = {taskId:id, startedAt:Date.now(), end:Date.now() + 5*60000, ended:false};
+  try { S.audio = S.audio || new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
+  saveUser(); render();
+}
+function endTimer(markDone){
+  if (!S.timer) return;
+  const el = Math.max(0, Date.now() - S.timer.startedAt);
+  const x = findTask(S.timer.taskId);
+  if (x){
+    x.sessionMs = Math.min(DAY_MS, (x.sessionMs || 0) + el);
+    if (markDone) completeTask(x); else if (x.status === 'doing') x.status = 'todo';
+  }
+  const d = new Date();
+  S.logs.push({type:'session', date:dayKey(d), hour:d.getHours(), barrier:null, durMs:el});
+  S.timer = null;
+  saveUser();
+}
+function continueTimer(){
+  if (!S.timer) return;
+  S.timer.end = Date.now() + 10*60000; S.timer.ended = false;
+  render();
+}
+function timerDone(){
+  if (!S.timer || S.timer.ended) return;
+  S.timer.ended = true;
+  beep();
+  if (S.notif && 'Notification' in window && Notification.permission === 'granted'){
+    try { new Notification('StartNow', {body: t('timerEnded')}); } catch(e){}
+  }
+  render();
+}
+function beep(){
+  try {
+    if (!S.audio) return;
+    const o = S.audio.createOscillator(), g = S.audio.createGain();
+    o.connect(g); g.connect(S.audio.destination); o.frequency.value = 660; g.gain.value = .08;
+    o.start(); o.stop(S.audio.currentTime + .35);
+  } catch(e){}
+}
+function tick(){
+  if (!S.timer) return;
+  const left = S.timer.end - Date.now();
+  if (left <= 0){ timerDone(); return; }
+  const el = document.getElementById('timerVal');
+  if (el) el.textContent = fmtMs(left);
+}
+
+// ============================================================
+// 8) الإعلانات المؤقتة والحذف مع التراجع
+// ============================================================
+function showToast(msg, undo){
+  S.toast = {msg, undo: !!undo};
+  render();
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(() => { if (!S.undo){ S.toast = null; render(); } }, 4000);
+}
+
+// ============================================================
+// 9) الواجهة: مساعدات العرض
+// ============================================================
+const catLabel = (c) => t('cat_' + c);
+const prioLabel = (p) => t(p);
+function avatarInitial(name){ return esc((name || '?').trim().charAt(0).toUpperCase()); }
+function applyDocAttrs(){
+  document.documentElement.lang = S.lang;
+  document.documentElement.dir = S.lang === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.dataset.theme = S.theme;
+  document.title = 'StartNow';
+  const meta = document.querySelector('meta[name=theme-color]');
+  if (meta) meta.content = '#16A36A';
+}
+
+// ============================================================
+// 10) الشاشات
+// ============================================================
+function viewLogin(){
+  return `
+  <div class="lang"><button class="pill sm" data-a="lang">${S.lang === 'ar' ? 'English' : 'العربية'}</button></div>
+  <form class="login" data-f="login" autocomplete="on">
+    <div class="brand">Start<span>Now</span></div>
+    <div class="slogan">Stop Delaying. Start Living.</div>
+    <div class="field"><label class="lbl" for="u">${t('username')}</label>
+      <input id="u" name="username" type="text" required maxlength="30" autocapitalize="none" autocomplete="username"></div>
+    <div class="field"><label class="lbl" for="p">${t('password')}</label>
+      <input id="p" name="password" type="password" required maxlength="200" autocomplete="current-password"></div>
+    <div class="spacer"></div>
+    <button class="btn" type="submit" ${S.busy ? 'disabled' : ''}>${t('login')}</button>
+    <div class="err" id="loginErr">${esc(S.msg || '')}</div>
+    <div class="hint">${t('loginHint')}</div>
+  </form>`;
+}
+
+function viewHome(){
+  const today = dayKey(new Date());
+  const list = S.tasks.filter(x => x.day === today);
+  const done = list.filter(x => x.status === 'done').length;
+  const total = list.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const r = 50, c = 2*Math.PI*r;
+  const q = currentQuote();
+  const tp = TEMPLATES[S.tplIdx];
+  const fav = q && S.favs.includes(String(q.id));
+  const hour = new Date().getHours();
+  const showClose = hour >= 20 && S.dayClose !== today && list.some(x => x.status !== 'done');
+  const xp = S.logs.filter(l => l.type === 'done').length;
+  const level = Math.floor(xp/10) + 1, lvlPct = (xp % 10) * 10;
+  const f = S.filter;
+  const shown = list.filter(x => f === 'all' || (f === 'todo' && x.status === 'todo') || (f === 'doing' && x.status === 'doing') || (f === 'done' && x.status === 'done'));
+  const greet = S.lang === 'ar' ? 'صباح الخير' : 'Good day';
+  return `
+  <header class="row between">
+    <div class="row">
+      <div class="avatar">${avatarInitial(S.user.display_name)}</div>
+      <div><div class="hello">${greet}</div><div class="name">${esc(S.user.display_name)}</div></div>
+    </div>
+    <div class="row">
+      <button class="circle-btn dark" data-a="add-task" aria-label="${t('addTask')}">+</button>
+      <button class="circle-btn" data-a="notif-toggle" aria-pressed="${S.notif}" aria-label="${t('notifs')}">${S.notif ? '🔔' : '🔕'}</button>
+    </div>
+  </header>
+
+  <h1 class="hero">${t('heroTitle')}</h1>
+
+  ${S.comeback ? `<div class="banner small">${t('welcomeBack')}</div>` : ''}
+
+  <section class="card dark" aria-label="${t('progressToday')}">
+    <div class="progress">
+      <div class="ring">
+        <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="${r}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/>
+          <circle cx="60" cy="60" r="${r}" fill="none" stroke="#16A36A" stroke-width="12" stroke-linecap="round"
+            stroke-dasharray="${(c*pct/100).toFixed(1)} ${c.toFixed(1)}"/>
+        </svg>
+        <div class="pct">${pct}<small style="font-size:14px">%</small></div>
+      </div>
+      <div class="grow">
+        <div class="stat"><span class="ic">📋</span><div><b>${total}</b><span class="muted small">${t('total')}</span></div></div>
+        <div class="stat"><span class="ic">✅</span><div><b>${done}</b><span class="muted small">${t('doneC')}</span></div></div>
+        <div class="stat"><span class="ic">⏳</span><div><b>${total - done}</b><span class="muted small">${t('pendingC')}</span></div></div>
+      </div>
+    </div>
+    <div class="small" style="margin-top:10px;color:#bfbfc6">${S.lang==='ar'?'المستوى':'Level'} ${level} · ${xp % 10}/10</div>
+    <div style="height:6px;border-radius:9px;background:rgba(255,255,255,.12);margin-top:6px;overflow:hidden"><div style="height:6px;width:${lvlPct}%;background:#16A36A"></div></div>
+  </section>
+
+  <div class="section-h"><h2>${S.lang === 'ar' ? 'عبارة اليوم' : 'Quote of the day'}</h2></div>
+  <section class="quote" style="background:${tplBg(tp)};color:${tp.fg}">
+    ${q ? `
+      <div class="q-cat">${esc(catLabel(q.cat))}</div>
+      <p class="q-ar">${esc(q.ar)}</p>
+      ${q.en ? `<p class="q-en">${esc(q.en)}</p>` : ''}
+      ${q.author ? `<div class="q-au">— ${esc(q.author)}</div>` : ''}
+    ` : `<p class="q-ar">${S.lang==='ar' ? 'ابدأ الآن، والتفاصيل تأتي لاحقاً' : 'Start now; details come later'}</p>`}
+    <div class="q-actions">
+      <button data-a="tpl-next" aria-label="${S.lang==='ar'?'تغيير الخلفية':'Change background'}">🎨</button>
+      <button data-a="share-quote" aria-label="${t('share')}">⬇</button>
+      <button data-a="fav-quote" class="${fav ? 'on' : ''}" aria-pressed="${!!fav}" aria-label="${t('save')}">${fav ? '★' : '☆'}</button>
+      <button data-a="energy" aria-pressed="${S.energyLow}" class="${S.energyLow ? 'on' : ''}">⚡ ${t('energy')}</button>
+    </div>
+  </section>
+
+  ${showClose ? `
+  <section class="card" style="margin-top:16px">
+    <h3 style="margin:0 0 6px">${t('dayCloseT')}</h3>
+    <div class="muted small" style="margin-bottom:12px">${t('dayCloseTxt')}</div>
+    <div class="row"><button class="btn sm ghost grow" data-a="day-move">${t('moveTomorrow')}</button>
+    <button class="btn sm grow" data-a="day-close">${t('closeNoMove')}</button></div>
+  </section>` : ''}
+
+  <div class="section-h"><h2>${t('todayTasks')}</h2></div>
+  <div class="chips" role="tablist">
+    ${['all','todo','doing','doneF'].map(k => {
+      const key = k === 'doneF' ? 'done' : k;
+      return `<button class="pill ${f===key?'on':''}" data-a="filter" data-v="${key}" aria-pressed="${f===key}">${t(k === 'doneF' ? 'doneF' : k)}</button>`;
+    }).join('')}
+  </div>
+  ${renderTaskList(shown)}
+  `;
+}
+
+function renderTaskList(list){
+  if (!list.length) return `<div class="empty card">${S.lang==='ar' ? 'لا توجد مهام هنا. أضف أول مهمة واكسر حاجز البداية.' : 'No tasks here. Add your first one and break the barrier.'}</div>`;
+  return list.map(x => {
+    const isTimer = S.timer && S.timer.taskId === x.id;
+    return `
+    <article class="task ${x.status === 'done' ? 'done' : ''}" data-id="${esc(x.id)}">
+      <button class="check" data-a="toggle" data-id="${esc(x.id)}" aria-label="${t('finish')}" aria-pressed="${x.status==='done'}">${x.status === 'done' ? '✓' : ''}</button>
+      <div class="t-body">
+        <div class="t-text">${esc(x.text)}</div>
+        <div class="t-meta">
+          <span class="tag ${esc(x.priority)}">${esc(prioLabel(x.priority))}</span>
+          ${x.recurring || x.parent ? `<span>🔁</span>` : ''}
+          ${x.status === 'doing' ? `<span>● ${t('doing')}</span>` : ''}
+        </div>
+        ${isTimer ? timerBlock() : ''}
+        ${x.status !== 'done' && !isTimer ? `
+        <div class="t-act">
+          <button class="pill sm" data-a="start" data-id="${esc(x.id)}">▶ ${t('start5')}</button>
+          <button class="pill sm" data-a="barrier" data-id="${esc(x.id)}">${t('notStarted')}</button>
+        </div>` : ''}
+        <div class="t-act">
+          <button class="pill sm" data-a="edit" data-id="${esc(x.id)}">${t('edit')}</button>
+          <button class="pill sm" data-a="del" data-id="${esc(x.id)}">${t('del')}</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function timerBlock(){
+  const left = S.timer.end - Date.now();
+  if (S.timer.ended){
+    return `<div class="banner small" style="margin-top:10px">${t('timerEnded')}
+      <div class="row" style="margin-top:10px"><button class="btn sm green grow" data-a="timer-cont">${t('cont10')}</button>
+      <button class="btn sm ghost grow" data-a="timer-stop">${t('stopHere')}</button></div></div>`;
+  }
+  return `<div style="margin-top:10px"><div class="small muted">${t('timerLeft')}</div>
+    <div class="timer" id="timerVal">${fmtMs(Math.max(0,left))}</div>
+    <div class="row" style="margin-top:8px"><button class="btn sm green grow" data-a="timer-done">${t('finish')}</button>
+    <button class="btn sm ghost grow" data-a="timer-stop">${t('stopHere')}</button></div></div>`;
+}
+
+function viewRooms(){
+  if (S.roomId) return viewRoomDetail();
+  const list = S.rooms.map(r => {
+    const st = r.status === 'upcoming' ? t('upcoming') : r.status === 'ended' ? t('ended') : t('activeS');
+    const left = Math.max(0, daysBetween(dayKey(new Date()), r.ends_on) + 1);
+    return `<button class="room" data-a="room-open" data-id="${r.id}">
+      <div class="row between"><h3>${esc(r.name)}</h3><span class="pill sm">${esc(st)}</span></div>
+      <div class="muted small">${esc(r.goal)}</div>
+      <div class="row small" style="margin-top:10px;color:var(--muted)"><span>👥 ${r.members}/12 ${t('members')}</span><span>· ⏱ ${left} ${t('daysLeft')}</span></div>
+    </button>`;
+  }).join('');
+  return `
+  <h1 class="hero" style="font-size:30px">${t('rooms')}</h1>
+  <div class="row" style="margin-bottom:12px">
+    <button class="btn grow" data-a="room-new">${t('createRoom')}</button>
+    <button class="btn ghost grow" data-a="room-join">${t('joinRoom')}</button>
+  </div>
+  ${list || `<div class="empty card">${t('noRooms')}</div>`}`;
+}
+
+function viewRoomDetail(){
+  const d = S.roomData;
+  if (!d) return `<div class="empty">…</div><button class="btn ghost" data-a="room-back">←</button>`;
+  const r = d.room, me = d.me;
+  const restDisabled = me.rest_used_week || me.rested_today || r.status !== 'active';
+  const board = d.board.map((m, i) => `
+    <div class="rank top${i+1 <= 3 ? i+1 : ''} ${m.is_me ? 'me' : ''}">
+      <div class="n">${i+1}</div>
+      <div class="av">${avatarInitial(m.name)}</div>
+      <div class="grow">
+        <div style="font-weight:700">${esc(m.name)}${m.is_me ? ` <span class="muted small">(${S.lang==='ar'?'أنت':'you'})</span>` : ''}</div>
+        <div class="small muted">${m.done} ✓ ${m.today_done ? '· ✅' : ''}</div>
+      </div>
+      <div class="streak">🔥 ${m.streak}</div>
+    </div>`).join('');
+  return `
+  <div class="row between" style="margin-bottom:6px">
+    <button class="circle-btn" data-a="room-back" aria-label="back">${S.lang==='ar'?'→':'←'}</button>
+    <span class="pill sm">${esc(r.status === 'upcoming' ? t('upcoming') : r.status === 'ended' ? t('ended') : t('activeS'))}</span>
+  </div>
+  <h1 class="hero" style="font-size:28px;margin:12px 0 6px">${esc(r.name)}</h1>
+  <div class="muted" style="margin-bottom:14px">🎯 ${esc(r.goal)}</div>
+
+  <section class="card dark" style="margin-bottom:14px">
+    <div class="small" style="color:#bfbfc6">${t('inviteCode')}</div>
+    <div class="row between" style="margin-top:6px"><span class="code">${esc(r.code)}</span>
+      <button class="pill sm" data-a="room-copy" style="background:#fff;color:#111;border:0">⧉</button></div>
+  </section>
+
+  ${r.status === 'active' ? `
+  <div class="row" style="margin-bottom:10px">
+    <button class="btn green grow" data-a="room-checkin" ${me.checked_today ? 'disabled' : ''}>${me.checked_today ? '✓ ' + (S.lang==='ar'?'أنجزت اليوم':'Done today') : t('checkin')}</button>
+  </div>
+  <button class="btn ghost" style="margin-bottom:14px" data-a="room-rest" ${restDisabled ? 'disabled' : ''}>${t('restBtn')}</button>` : ''}
+
+  <div class="section-h"><h2>${t('leaderboard')}</h2></div>
+  <section class="card" style="padding:6px 14px">${board}</section>
+  <div class="hint" style="margin-top:12px">${t('supportMsg')}</div>
+
+  <div class="row" style="margin-top:18px">
+    ${r.is_owner
+      ? `<button class="btn danger" data-a="room-delete">${t('deleteRoom')}</button>`
+      : `<button class="btn ghost" data-a="room-leave">${t('leave')}</button>`}
+  </div>`;
+}
+
+function viewTasks(){
+  const days = [0,1,2,3,4,5,6].map(i => addDays(dayKey(new Date()), i));
+  const view = S.dayView || dayKey(new Date());
+  const list = S.tasks.filter(x => x.day === view);
+  const dn = (k) => new Date(k+'T00:00:00').toLocaleDateString(S.lang === 'ar' ? 'ar' : 'en', {weekday:'short'});
+  const ins = insights();
+  const insText = !S.logs.length ? t('noData') : [
+    ins.barrier ? `${t('topBarrier')}: ${t('b_' + ins.barrier) || ins.barrier}` : null,
+    ins.hour !== null ? `${t('bestTime')}: ${pad(ins.hour)}:00 – ${pad((ins.hour+1)%24)}:00` : null,
+    ins.avgMin !== null ? `${t('avgSession')}: ${ins.avgMin} ${S.lang==='ar'?'دقيقة':'min'}` : null,
+    `${t('activeDays')}: ${ins.activeDays}`
+  ].filter(Boolean).map(s => `<div style="padding:6px 0">${esc(s)}</div>`).join('');
+  return `
+  <h1 class="hero" style="font-size:30px">${S.lang==='ar' ? 'الجدول' : 'Schedule'}</h1>
+  <div class="days">
+    ${days.map(k => `<button class="day ${k===view?'on':''}" data-a="day-pick" data-v="${k}">${esc(dn(k))}<b>${Number(k.slice(-2))}</b></button>`).join('')}
+  </div>
+  ${renderTaskList(list)}
+  <button class="btn ghost" data-a="add-task" style="margin-bottom:18px">+ ${t('addTask')}</button>
+  <div class="section-h"><h2>${t('insights')}</h2></div>
+  <section class="card small">${insText}</section>`;
+}
+
+function viewMe(){
+  const adm = S.user.role === 'admin';
+  return `
+  <h1 class="hero" style="font-size:30px">${t('profile')}</h1>
+  <section class="card" style="margin-bottom:14px">
+    <div class="row"><div class="avatar">${avatarInitial(S.user.display_name)}</div>
+      <div><div class="name">${esc(S.user.display_name)}</div><div class="muted small">@${esc(S.user.username)}</div></div></div>
+  </section>
+
+  <section class="card" style="margin-bottom:14px">
+    <div class="row between"><span>${t('notifs')}</span>
+      <button class="pill sm" data-a="notif-toggle" aria-pressed="${S.notif}">${S.notif ? (S.lang==='ar'?'مفعّل':'On') : (S.lang==='ar'?'متوقف':'Off')}</button></div>
+    <div class="row between" style="margin-top:12px"><span>${t('theme')}</span>
+      <div class="row">${['auto','light','dark'].map(k => `<button class="pill sm ${S.theme===k?'on':''}" data-a="theme" data-v="${k}">${t(k)}</button>`).join('')}</div></div>
+    <div class="row between" style="margin-top:12px"><span>${S.lang==='ar'?'اللغة':'Language'}</span>
+      <button class="pill sm" data-a="lang">${S.lang==='ar' ? 'English' : 'العربية'}</button></div>
+  </section>
+
+  <section class="card" style="margin-bottom:14px">
+    <h3 style="margin:0 0 6px">${t('changePass')}</h3>
+    <form data-f="pass">
+      <label class="lbl">${t('oldPass')}</label><input name="old" type="password" required maxlength="200">
+      <label class="lbl">${t('newPass')}</label><input name="new" type="password" required minlength="8" maxlength="200">
+      <div class="spacer"></div><button class="btn ghost" type="submit">${t('save')}</button>
+    </form>
+  </section>
+
+  ${adm ? `<section class="card" style="margin-bottom:14px"><button class="btn" data-a="open-admin">🛡 ${t('admin')}</button></section>` : ''}
+
+  <button class="btn ghost" data-a="logout">${t('logout')}</button>`;
+}
+
+function viewAdmin(){
+  const u = S.admin.users.map(x => `
+    <div class="task" style="margin-bottom:8px;align-items:center">
+      <div class="t-body">
+        <div class="t-text" style="margin:0">${esc(x.display_name)} <span class="muted small">@${esc(x.username)}</span></div>
+        <div class="t-meta"><span>${x.role === 'admin' ? t('adminRole') : t('userRole')}</span>
+          <span>· ${x.disabled ? t('disabled') : t('active')}</span></div>
+      </div>
+      <div class="row" style="flex-direction:column;gap:6px">
+        <button class="pill sm" data-a="user-toggle" data-id="${x.id}" data-v="${x.disabled ? 0 : 1}">${x.disabled ? t('enable') : t('disable')}</button>
+        <button class="pill sm" data-a="user-reset" data-id="${x.id}">${t('resetPass')}</button>
+      </div>
+    </div>`).join('');
+  const q = S.admin.quotes.map(x => `
+    <div class="task" style="margin-bottom:8px">
+      <div class="t-body">
+        <div class="t-text" style="margin-bottom:4px;font-size:15px">${esc(x.ar)}</div>
+        <div class="t-meta"><span>${esc(catLabel(x.cat))}</span><span>· ${x.active ? t('active') : t('disabled')}</span></div>
+        <div class="t-act"><button class="pill sm" data-a="quote-edit" data-id="${x.id}">${t('edit')}</button>
+        <button class="pill sm" data-a="quote-del" data-id="${x.id}">${t('del')}</button></div>
+      </div>
+    </div>`).join('');
+  return `
+  <div class="row between" style="margin-bottom:6px">
+    <button class="circle-btn" data-a="close-admin" aria-label="back">${S.lang==='ar'?'→':'←'}</button>
+    <span class="pill sm">🛡 ${t('admin')}</span>
+  </div>
+  <h1 class="hero" style="font-size:28px">${t('users')}</h1>
+  <button class="btn" style="margin-bottom:10px" data-a="user-new">+ ${t('newUser')}</button>
+  ${u || `<div class="empty card">—</div>`}
+  <div class="section-h"><h2>${t('quotesAdm')}</h2></div>
+  <button class="btn ghost" style="margin-bottom:10px" data-a="quote-new">+ ${t('addQuote')}</button>
+  ${q || `<div class="empty card">—</div>`}`;
+}
+
+// الشيتات: نوافذ سفلية للإدخال
+function viewSheet(){
+  const s = S.sheet; if (!s) return '';
+  let body = '';
+  if (s.kind === 'task'){
+    const x = s.id ? findTask(s.id) : null;
+    body = `<h3>${x ? t('edit') : t('addTask')}</h3>
+    <form data-f="task" ${x ? `data-id="${esc(x.id)}"` : ''}>
+      <label class="lbl">${t('text')}</label>
+      <input name="text" type="text" required maxlength="200" value="${esc(x ? x.text : '')}">
+      <label class="lbl">${t('priority')}</label>
+      <select name="priority">${PRIOS.map(p => `<option value="${p}" ${(x ? x.priority : 'medium') === p ? 'selected' : ''}>${t(p)}</option>`).join('')}</select>
+      <label class="lbl">${t('recurring')}</label>
+      <select name="recurring">${RECS.map(r => `<option value="${r || ''}" ${(x ? x.recurring : null) === r ? 'selected' : ''}>${t(r || 'none')}</option>`).join('')}</select>
+      ${x ? '' : `<input type="hidden" name="day" value="${esc(S.dayView || dayKey(new Date()))}">`}
+      <div class="spacer"></div>
+      <button class="btn" type="submit">${t('save')}</button>
+    </form>`;
+  } else if (s.kind === 'barrier'){
+    const x = findTask(s.id);
+    const keys = ['fear','tired','fog','perfect','noise','other'];
+    body = `<h3>${t('notStarted')}</h3><div class="muted small" style="margin-bottom:12px">${t('barrierHint')}</div>
+      ${keys.map(k => `<button class="opt ${s.pick===k?'on':''}" data-a="barrier-pick" data-v="${k}">${t('b_'+k)}</button>`).join('')}
+      ${s.pick ? `<div class="banner small" style="margin-top:8px">${t('r_'+s.pick)}</div>
+        <button class="btn green" data-a="barrier-start" data-id="${esc(x ? x.id : '')}">▶ ${t('start5')}</button>` : ''}`;
+  } else if (s.kind === 'room-new'){
+    body = `<h3>${t('createRoom')}</h3>
+    <form data-f="room-new">
+      <label class="lbl">${t('roomName')}</label><input name="name" type="text" required maxlength="60">
+      <label class="lbl">${t('goal')}</label><input name="goal" type="text" required maxlength="120" placeholder="${S.lang==='ar'?'مثال: قراءة 20 دقيقة يومياً':'e.g. Read 20 min a day'}">
+      <label class="lbl">${t('duration')}</label>
+      <select name="days">${[7,14,30].map(d => `<option value="${d}">${d} ${t('days')}</option>`).join('')}</select>
+      <div class="spacer"></div><button class="btn" type="submit">${t('create')}</button>
+    </form>`;
+  } else if (s.kind === 'room-join'){
+    body = `<h3>${t('joinRoom')}</h3>
+    <form data-f="room-join">
+      <label class="lbl">${t('code')}</label>
+      <input name="code" type="text" required maxlength="6" autocapitalize="characters" style="letter-spacing:4px;text-transform:uppercase;font-weight:800">
+      <div class="spacer"></div><button class="btn" type="submit">${t('joinRoom')}</button>
+    </form>`;
+  } else if (s.kind === 'quote'){
+    const q = s.id ? S.admin.quotes.find(x => x.id === s.id) : null;
+    body = `<h3>${q ? t('edit') : t('addQuote')}</h3>
+    <form data-f="quote">
+      <input type="hidden" name="id" value="${q ? q.id : 0}">
+      <label class="lbl">${t('quoteAr')}</label><textarea name="ar" required maxlength="300">${esc(q ? q.ar : '')}</textarea>
+      <label class="lbl">${t('quoteEn')}</label><input name="en" type="text" maxlength="300" value="${esc(q ? q.en : '')}">
+      <label class="lbl">${t('author')}</label><input name="author" type="text" maxlength="100" value="${esc(q ? q.author : '')}">
+      <label class="lbl">${t('category')}</label>
+      <select name="cat">${['start','low_energy','focus','comeback','achievement'].map(c => `<option value="${c}" ${(q ? q.cat : 'start') === c ? 'selected' : ''}>${t('cat_'+c)}</option>`).join('')}</select>
+      <label class="row small" style="margin-top:12px"><input type="checkbox" name="active" ${!q || q.active ? 'checked' : ''}> ${t('isActive')}</label>
+      <div class="spacer"></div>
+      <div class="row"><button class="btn ghost" type="button" data-a="quote-del-sheet" data-id="${q ? q.id : 0}">${t('del')}</button>
+      <button class="btn" type="submit">${t('save')}</button></div>
+    </form>`;
+  } else if (s.kind === 'user-new'){
+    body = `<h3>${t('newUser')}</h3>
+    <form data-f="user-new">
+      <label class="lbl">${t('username')}</label><input name="username" type="text" required maxlength="30" pattern="[A-Za-z0-9_.\\-]{3,30}" autocapitalize="none">
+      <label class="lbl">${t('displayName')}</label><input name="display_name" type="text" required maxlength="60">
+      <label class="lbl">${t('password')}</label><input name="password" type="text" required minlength="8" maxlength="200">
+      <label class="lbl">${t('role')}</label>
+      <select name="role"><option value="user">${t('userRole')}</option><option value="admin">${t('adminRole')}</option></select>
+      <div class="spacer"></div><button class="btn" type="submit">${t('create')}</button>
+    </form>`;
+  }
+  return `<div class="overlay" data-a="overlay-close"><div class="sheet" role="dialog" aria-modal="true" data-stop="1">
+    <div class="row between" style="margin-bottom:8px"><span></span>
+    <button class="circle-btn" style="width:36px;height:36px" data-a="close-sheet" aria-label="${t('cancel')}">✕</button></div>
+    ${body}</div></div>`;
+}
+
+function viewToast(){
+  if (!S.toast) return '';
+  return `<div class="toast" role="status" aria-live="polite"><span id="toastMsg"></span>
+    ${S.toast.undo ? `<button data-a="undo">${t('undo')}</button>` : ''}</div>`;
+}
+
+function viewNav(){
+  const tabs = [
+    ['home','🏠', S.lang==='ar'?'الرئيسية':'Home'],
+    ['rooms','🏆', S.lang==='ar'?'الغرف':'Rooms'],
+    ['tasks','📅', S.lang==='ar'?'الجدول':'Schedule'],
+    ['me','👤', S.lang==='ar'?'حسابي':'Account']
+  ];
+  return `<nav class="nav" aria-label="main">${tabs.map(([k,ic,lb]) =>
+    `<button class="${S.tab===k?'on':''}" data-a="tab" data-v="${k}" aria-current="${S.tab===k?'page':'false'}"><span class="i">${ic}</span>${lb}</button>`
+  ).join('')}</nav>`;
+}
+
+function render(){
+  // مسح المؤقّت القديم قبل إعادة الرسم (يمنع تراكم الفواصل الزمنية)
+  clearInterval(S.tickId); S.tickId = null;
+  if (S.timer) S.tickId = setInterval(tick, 1000);
+  applyDocAttrs();
+  const app = $('#app');
+  if (!app) return;
+  if (!S.user){
+    app.innerHTML = viewLogin();
+    return;
+  }
+  let screen = '';
+  if (S.tab === 'home') screen = viewHome();
+  else if (S.tab === 'rooms') screen = viewRooms();
+  else if (S.tab === 'tasks') screen = viewTasks();
+  else if (S.tab === 'me') screen = viewMe();
+  else if (S.tab === 'admin') screen = viewAdmin();
+  app.innerHTML = `<main class="app">${screen}</main>${S.tab !== 'admin' ? viewNav() : ''}${viewSheet()}${viewToast()}`;
+  // نص الرسالة يُكتب كـ textContent لا innerHTML
+  const tm = document.getElementById('toastMsg');
+  if (tm && S.toast) tm.textContent = S.toast.msg;
+  const lg = document.getElementById('loginErr');
+  if (lg) lg.textContent = S.msg || '';
+}
+
+// ============================================================
+// 11) الأحداث (تفويض واحد) — لا onclick مضمّنة
+// ============================================================
+document.addEventListener('click', async (e) => {
+  const el = e.target.closest('[data-a]');
+  if (!el) return;
+  if (el.dataset.a === 'overlay-close' && e.target !== el) return;   // النقر داخل الشيت لا يغلقه
+  const a = el.dataset.a, id = el.dataset.id, v = el.dataset.v;
+  try {
+    await onAction(a, id, v);
+  } catch(err){
+    showToast(err.message || t('errGeneric'));
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && S.sheet){ S.sheet = null; render(); }
+});
+
+async function onAction(a, id, v){
+  switch (a){
+    case 'lang': S.lang = S.lang === 'ar' ? 'en' : 'ar'; savePrefs(); render(); return;
+    case 'theme': S.theme = v; savePrefs(); render(); return;
+    case 'tab':
+      S.tab = v; S.roomId = null; S.roomData = null;
+      if (v === 'rooms') await loadRooms();
+      render(); return;
+    case 'filter': S.filter = v; render(); return;
+    case 'day-pick': S.dayView = v; render(); return;
+    case 'add-task': S.sheet = {kind:'task'}; render(); return;
+    case 'edit': S.sheet = {kind:'task', id}; render(); return;
+    case 'close-sheet': case 'overlay-close': S.sheet = null; render(); return;
+    case 'undo': {
+      if (S.undo){
+        clearTimeout(S.undo.timer);
+        S.tasks.splice(Math.min(S.undo.idx, S.tasks.length), 0, S.undo.task);
+        S.undo = null; S.toast = null; saveUser(); render();
+      }
+      return;
+    }
+    case 'del': {
+      const idx = S.tasks.findIndex(x => x.id === id);
+      if (idx < 0) return;
+      const [task] = S.tasks.splice(idx, 1);
+      if (S.timer && S.timer.taskId === id) endTimer(false);
+      S.undo = {task, idx, timer: setTimeout(() => { S.undo = null; S.toast = null; saveUser(); render(); }, 4000)};
+      S.toast = {msg: S.lang==='ar' ? 'تم حذف المهمة' : 'Task deleted', undo: true};
+      saveUser(); render();
+      return;
+    }
+    case 'toggle': {
+      const x = findTask(id); if (!x) return;
+      if (x.status === 'done'){ x.status = 'todo'; x.doneAt = null; }
+      else {
+        if (S.timer && S.timer.taskId === id) endTimer(true); else completeTask(x);
+      }
+      saveUser(); render(); return;
+    }
+    case 'start': startTimer(id); return;
+    case 'timer-done': { if (S.timer) endTimer(true); render(); return; }
+    case 'timer-stop': { endTimer(false); render(); return; }
+    case 'timer-cont': continueTimer(); return;
+    case 'barrier': S.sheet = {kind:'barrier', id, pick:null}; render(); return;
+    case 'barrier-pick': S.sheet.pick = v; render(); return;
+    case 'barrier-start': {
+      const k = S.sheet && S.sheet.pick;
+      if (k){
+        const d = new Date();
+        S.logs.push({type:'barrier', date:dayKey(d), hour:d.getHours(), barrier:k, durMs:0});
+      }
+      S.sheet = null;
+      startTimer(id);
+      return;
+    }
+    case 'energy': S.energyLow = !S.energyLow; render(); return;
+    case 'tpl-next': S.tplIdx = (S.tplIdx + 1) % TEMPLATES.length; savePrefs(); render(); return;
+    case 'fav-quote': {
+      const q = currentQuote(); if (!q) return;
+      const key = String(q.id);
+      S.favs = S.favs.includes(key) ? S.favs.filter(x => x !== key) : [...S.favs, key].slice(-200);
+      saveUser(); render(); return;
+    }
+    case 'share-quote': shareQuote(); return;
+    case 'day-move': {
+      const tomorrow = addDays(dayKey(new Date()), 1), today = dayKey(new Date());
+      S.tasks.forEach(x => { if (x.day === today && x.status !== 'done') x.day = tomorrow; });
+      S.dayClose = today; saveUser(); render(); return;
+    }
+    case 'day-close': S.dayClose = dayKey(new Date()); saveUser(); render(); return;
+    case 'notif-toggle': {
+      if (!S.notif){
+        if (!('Notification' in window)){ showToast(S.lang==='ar'?'المتصفح لا يدعم الإشعارات':'Notifications not supported'); return; }
+        const perm = await Notification.requestPermission();
+        S.notif = perm === 'granted';
+      } else S.notif = false;
+      savePrefs(); render(); return;
+    }
+    case 'lang-toggle': return;
+
+    // ---- الدخول والخروج ----
+    case 'logout': {
+      try { await api('logout', {}); } catch(e){}
+      S.token = null; S.user = null; S.tab = 'home';
+      store.del('startnow.v2.token');
+      render(); return;
+    }
+
+    // ---- الغرف ----
+    case 'room-new': S.sheet = {kind:'room-new'}; render(); return;
+    case 'room-join': S.sheet = {kind:'room-join'}; render(); return;
+    case 'room-open': S.roomId = Number(id); await loadRoom(S.roomId); render(); return;
+    case 'room-back': S.roomId = null; S.roomData = null; await loadRooms(); render(); return;
+    case 'room-checkin': await api('room_checkin', {room_id: S.roomId}); showToast(t('checkedOk')); await loadRoom(S.roomId); render(); return;
+    case 'room-rest': await api('room_rest', {room_id: S.roomId}); await loadRoom(S.roomId); render(); return;
+    case 'room-copy': {
+      const code = S.roomData && S.roomData.room.code;
+      try { await navigator.clipboard.writeText(code); } catch(e){}
+      showToast(t('copied')); return;
+    }
+    case 'room-leave': {
+      if (!confirm(t('confirmLeave'))) return;
+      await api('room_leave', {room_id: S.roomId}); S.roomId = null; S.roomData = null; await loadRooms(); render(); return;
+    }
+    case 'room-delete': {
+      if (!confirm(t('confirmRoom'))) return;
+      await api('room_delete', {room_id: S.roomId}); S.roomId = null; S.roomData = null; await loadRooms(); render(); return;
+    }
+
+    // ---- المسؤول ----
+    case 'open-admin': S.tab = 'admin'; await loadAdmin(); render(); return;
+    case 'close-admin': S.tab = 'me'; render(); return;
+    case 'user-new': S.sheet = {kind:'user-new'}; render(); return;
+    case 'user-toggle': {
+      await api('admin_user_update', {id: Number(id), disabled: v === '1'});
+      await loadAdmin(); render(); return;
+    }
+    case 'user-reset': {
+      const pw = prompt(S.lang==='ar' ? 'كلمة المرور الجديدة (8 أحرف على الأقل):' : 'New password (min 8 chars):');
+      if (!pw) return;
+      await api('admin_user_update', {id: Number(id), password: pw});
+      showToast(T.pwOk[S.lang]); return;
+    }
+    case 'quote-new': S.sheet = {kind:'quote'}; render(); return;
+    case 'quote-edit': S.sheet = {kind:'quote', id: Number(id)}; render(); return;
+    case 'quote-del-sheet':
+    case 'quote-del': {
+      if (!confirm(t('confirmDel'))) return;
+      await api('admin_quote_delete', {id: Number(id)});
+      S.sheet = null; await loadAdmin(); render(); return;
+    }
+    case 'pass-open': return;
+    default: return;
+  }
+}
+
+// ============================================================
+// 12) تحميل البيانات
+// ============================================================
+async function loadRooms(){
+  try { S.rooms = (await api('rooms')).rooms; } catch(e){ showToast(e.message); }
+}
+async function loadRoom(id){
+  try { S.roomData = await api('room', null, {id}); } catch(e){ showToast(e.message); }
+}
+async function loadAdmin(){
+  try {
+    const [u, q] = await Promise.all([api('admin_users'), api('admin_quotes')]);
+    S.admin.users = u.users; S.admin.quotes = q.quotes;
+  } catch(e){ showToast(e.message); }
+}
+async function loadQuotes(){
+  try {
+    const j = await api('quotes');
+    S.quotes = j.quotes;
+    store.set('startnow.v2.quotes', j.quotes);
+  } catch(e){
+    S.quotes = store.get('startnow.v2.quotes') || [];
+  }
+}
+
+function afterLogin(){
+  const today = dayKey(new Date());
+  const gap = S.lastActive ? daysBetween(S.lastActive, today) : 0;
+  S.comeback = gap >= 3;
+  S.lastActive = today;
+  ensureRecurring();
+  saveUser();
+}
+
+// ============================================================
+// 13) النماذج (تفويض submit واحد)
+// ============================================================
+document.addEventListener('submit', async (e) => {
+  const f = e.target;
+  if (!(f instanceof HTMLFormElement)) return;
+  e.preventDefault();
+  const kind = f.dataset.f;
+  const fd = Object.fromEntries(new FormData(f).entries());
+  try {
+    if (kind === 'login'){
+      S.msg = ''; S.busy = true; render();
+      const j = await api('login', {username: fd.username, password: fd.password});
+      S.busy = false;
+      S.token = j.token; S.user = j.user;
+      store.set('startnow.v2.token', j.token);
+      loadUser(); afterLogin();
+      S.tab = 'home';
+      await loadQuotes();
+      render(); return;
+    }
+    if (kind === 'task'){
+      const text = String(fd.text || '').trim();
+      if (!text){ showToast(t('needText')); return; }
+      const priority = PRIOS.includes(fd.priority) ? fd.priority : 'medium';
+      const recurring = RECS.includes(fd.recurring || null) ? (fd.recurring || null) : null;
+      if (f.dataset.id){
+        const x = findTask(f.dataset.id);
+        if (x){ x.text = sanitizeTask({text}).text; x.priority = priority; x.recurring = recurring; }
+      } else {
+        const task = newTask({text, day: fd.day || dayKey(new Date()), priority, recurring});
+        if (task) S.tasks.push(task);
+      }
+      S.sheet = null; ensureRecurring(); saveUser(); render(); return;
+    }
+    if (kind === 'barrier'){ return; }
+    if (kind === 'room-new'){
+      const j = await api('room_create', {name: fd.name, goal: fd.goal, days: Number(fd.days)});
+      S.sheet = null; S.roomId = j.id; await loadRoom(j.id); render(); return;
+    }
+    if (kind === 'room-join'){
+      const j = await api('room_join', {code: String(fd.code || '').toUpperCase()});
+      S.sheet = null; S.roomId = j.id; await loadRoom(j.id); render(); return;
+    }
+    if (kind === 'pass'){
+      await api('change_password', {old: fd.old, new: fd.new});
+      f.reset(); showToast(t('pwOk')); return;
+    }
+    if (kind === 'user-new'){
+      await api('admin_user_create', {username: fd.username, display_name: fd.display_name, password: fd.password, role: fd.role});
+      S.sheet = null; await loadAdmin(); showToast(t('userOk')); render(); return;
+    }
+    if (kind === 'quote'){
+      await api('admin_quote_save', {
+        id: Number(fd.id) || 0, ar: fd.ar, en: fd.en || '', author: fd.author || '',
+        cat: fd.cat, active: !!fd.active
+      });
+      S.sheet = null; await loadAdmin(); render(); return;
+    }
+  } catch(err){
+    S.busy = false;
+    if (kind === 'login'){ S.msg = err.message; render(); }
+    else showToast(err.message);
+  }
+});
+
+// ============================================================
+// 14) مشاركة العبارة كصورة (canvas)
+// ============================================================
+function wrapText(ctx, text, maxW){
+  const words = String(text).split(/\s+/); const lines = []; let line = '';
+  for (const w of words){
+    const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxW && line){ lines.push(line); line = w; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+function shareQuote(){
+  const q = currentQuote();
+  if (!q){ showToast(S.lang==='ar' ? 'لا توجد عبارة لمشاركتها' : 'No quote to share'); return; }
+  const tp = TEMPLATES[S.tplIdx];
+  const c = document.createElement('canvas'); c.width = 1080; c.height = 1350;
+  const x = c.getContext('2d');
+  const g = x.createLinearGradient(0,0,1080,1350);
+  g.addColorStop(0, tp.c[0]); g.addColorStop(.55, tp.c[1]); g.addColorStop(1, tp.c[2]);
+  x.fillStyle = g; x.fillRect(0,0,1080,1350);
+  x.fillStyle = 'rgba(255,255,255,.22)'; x.beginPath(); x.arc(190,190,260,0,Math.PI*2); x.fill();
+  x.fillStyle = 'rgba(0,0,0,.14)'; x.beginPath(); x.arc(930,1180,420,0,Math.PI*2); x.fill();
+  x.fillStyle = tp.fg; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const family = 'system-ui, -apple-system, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif';
+  x.direction = 'rtl'; x.font = `800 72px ${family}`;
+  const arL = wrapText(x, q.ar, 880);
+  const lh = 104; let y = 620 - (arL.length - 1) * lh / 2;
+  arL.forEach(l => { x.fillText(l, 540, y); y += lh; });
+  if (q.en){
+    x.direction = 'ltr'; x.font = `400 40px ${family}`;
+    y += 30;
+    wrapText(x, q.en, 880).forEach(l => { x.fillText(l, 540, y); y += 54; });
+  }
+  x.direction = 'ltr'; x.font = `600 34px ${family}`;
+  x.fillText('StartNow · Stop Delaying. Start Living.', 540, 1260);
+  c.toBlob((blob) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'startnow-quote.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }, 'image/png');
+}
+
+// ============================================================
+// 15) التشغيل
+// ============================================================
+async function boot(){
+  loadPrefs();
+  S.quotes = store.get('startnow.v2.quotes') || [];
+  render();
+  const hasSession = !!(await sb.auth.getSession()).data.session;
+  if (hasSession){
+    try {
+      const j = await api('me');
+      S.user = j.user;
+      loadUser(); afterLogin();
+      await loadQuotes();
+      render();
+    } catch(e){
+      if (!S.user){ S.token = null; store.del('startnow.v2.token'); render(); }
+    }
+  }
+}
+boot();
+</script>
+</body>
+</html>
